@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr" data-bs-theme="dark">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tasarim 3 - Glass Premium</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #0f0f1a;
+    --bg-card: rgba(255,255,255,0.04);
+    --glass: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.1);
+    --accent: #6c5ce7;
+    --accent2: #fd79a8;
+    --text: #f0f0f8;
+    --text-muted: #8080b0;
+}
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+.gradient-bg { position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 20% 50%, rgba(108,92,231,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 50%, rgba(253,121,168,0.06) 0%, transparent 50%); pointer-events: none; z-index: -1; }
+.navbar { background: rgba(15,15,26,0.8); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-bottom: 1px solid var(--glass-border); }
+.brand-text { font-weight: 800; font-family: 'Outfit', sans-serif; }
+.glass-card { background: var(--glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; transition: all 0.4s; }
+.glass-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.hero-glass { padding: 5rem 0; position: relative; }
+.hero-glass h1 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 3.2rem; }
+.glass-badge { background: rgba(108,92,231,0.2); color: #a89df0; border: 1px solid rgba(108,92,231,0.3); backdrop-filter: blur(8px); border-radius: 20px; font-size: 11px; letter-spacing: 1px; padding: 4px 14px; }
+.glass-image { height: 180px; background: linear-gradient(135deg, rgba(108,92,231,0.2), rgba(253,121,168,0.2)); }
+.glass-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border); backdrop-filter: blur(8px); color: white; border-radius: 12px; padding: 10px 30px; transition: all 0.3s; }
+.glass-btn:hover { background: rgba(108,92,231,0.2); border-color: rgba(108,92,231,0.4); color: white; }
+.glass-stat { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 1.2rem; }
+.glass-stat .number { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.6rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.blob { position: absolute; width: 300px; height: 300px; border-radius: 50%; filter: blur(80px); opacity: 0.3; }
+.blob-1 { background: var(--accent); top: -100px; right: -50px; }
+.blob-2 { background: var(--accent2); bottom: -100px; left: -50px; }
+.section-tag { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1.4rem; color: white; border-left: 3px solid var(--accent); padding-left: 12px; }
+</style>
+</head>
+<body>
+<div class="gradient-bg"></div>
+<nav class="navbar navbar-expand-lg sticky-top py-3">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-white" href="#"><span class="brand-text">Gündem</span></a>
+    <div><span class="glass-badge">✦ GLASS PREMIUM</span></div>
+  </div>
+</nav>
+
+<div class="hero-glass container position-relative">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="text-center position-relative">
+    <span class="glass-badge mb-3 d-inline-block">✦ YENI NESIL HABERCILIK</span>
+    <h1>Cam Gibi Net<br>Haber Deneyimi</h1>
+    <p class="text-muted mt-3 mb-4" style="max-width: 500px; margin: 0 auto;">Bulanık dünyada net haber. Şeffaf tasarım, keskin içerik.</p>
+    <button class="btn glass-btn px-5">CAMIN ARDINI GÖR</button>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="glass-stat text-center"><div class="number">24</div><small class="text-muted">SAAT CANLI</small></div></div>
+    <div class="col-md-3"><div class="glass-stat text-center"><div class="number">8</div><small class="text-muted">KATEGORI</small></div></div>
+    <div class="col-md-3"><div class="glass-stat text-center"><div class="number">AI</div><small class="text-muted">ANALIZ</small></div></div>
+    <div class="col-md-3"><div class="glass-stat text-center"><div class="number">∞</div><small class="text-muted">UCRETSIZ</small></div></div>
+  </div>
+
+  <div class="section-tag mb-4">Gundemdekiler</div>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="glass-card">
+        <div class="glass-image d-flex align-items-center justify-content-center"><i class="bi bi-currency-exchange display-4 text-white-50"></i></div>
+        <div class="p-3">
+          <span class="glass-badge">EKONOMI</span>
+          <h5 class="fw-bold mt-2">Dolar Kuru Geriledi</h5>
+          <p class="text-muted small">Merkez Bankası faiz kararı sonrası dolarda sert düşüş...</p>
+          <small class="text-muted"><i class="bi bi-clock"></i> 8 dk once</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="glass-card">
+        <div class="glass-image d-flex align-items-center justify-content-center"><i class="bi bi-robot display-4 text-white-50"></i></div>
+        <div class="p-3">
+          <span class="glass-badge">TEKNOLOJI</span>
+          <h5 class="fw-bold mt-2">GPT-5 Tanitildi</h5>
+          <p class="text-muted small">Yapay zeka dünyasında devrim yaratacak model piyasada...</p>
+          <small class="text-muted"><i class="bi bi-clock"></i> 15 dk once</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="glass-card">
+        <div class="glass-image d-flex align-items-center justify-content-center"><i class="bi bi-globe display-4 text-white-50"></i></div>
+        <div class="p-3">
+          <span class="glass-badge">DUNYA</span>
+          <h5 class="fw-bold mt-2">Barış Zirvesi Başladı</h5>
+          <p class="text-muted small">Dünya liderleri İstanbul'da bir araya geliyor...</p>
+          <small class="text-muted"><i class="bi bi-clock"></i> 1s once</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="text-center py-4">
+  <p class="text-muted small">Tasarim 3: GLASS PREMIUM · Cam efekti, blur ve şeffaflık, modern ve premium</p>
+  <a href="tasarim4.html" class="btn btn-sm glass-btn">Sonraki Tasarim <i class="bi bi-arrow-right ms-1"></i></a>
+</div>
+</body>
+</html>

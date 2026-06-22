@@ -1,0 +1,58 @@
+{% extends "admin/base.html" %}
+{% block title %}Haberler{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0"><i class="bi bi-newspaper"></i> Haberler</h2>
+    <a href="/admin/haber-ekle" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Yeni Haber</a>
+</div>
+
+<div class="card bg-dark border-secondary">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-dark table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Başlık</th>
+                        <th>Kategori</th>
+                        <th>Kaynak</th>
+                        <th>Tarih</th>
+                        <th>Görüntüleme</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in haberler %}
+                    <tr>
+                        <td>{{ h.id }}</td>
+                        <td><a href="/haber/{{ h.id }}" target="_blank" class="text-white">{{ h.title[:50] }}{% if h.title|length > 50 %}...{% endif %}</a></td>
+                        <td><span class="badge bg-info">{{ h.category }}</span></td>
+                        <td>{{ h.source }}</td>
+                        <td>{{ h.date }}</td>
+                        <td>{{ h.views }}</td>
+                        <td>
+                            <a href="/admin/haber-duzenle/{{ h.id }}" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+                            <form method="POST" action="/admin/haber-sil/{{ h.id }}" style="display:inline;" onsubmit="return confirm('Silmek istediğine emin misin?')">
+                                <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if toplam > 50 %}
+<nav class="mt-3">
+    <ul class="pagination pagination-sm">
+        {% for p in range(1, ((toplam // 50) + 2)) %}
+        <li class="page-item {% if p == sayfa %}active{% endif %}">
+            <a class="page-link bg-dark border-secondary text-white" href="/admin/haberler?sayfa={{ p }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

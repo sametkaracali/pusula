@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block title %}{% if aktif_kategori != 'tumu' %}{{ cat_info[aktif_kategori]['name'] }} Haberleri - Pusula{% else %}Pusula - Son Dakika Haberler ve Güncel Gelişmeler{% endif %}{% endblock %}
+{% block description %}{% if aktif_kategori != 'tumu' %}{{ cat_info[aktif_kategori]['desc'] }} - Pusula{% else %}Türkiye ve dünyadan son dakika haberler, güncel gelişmeler, ekonomi, spor, teknoloji ve daha fazlası Pusula'de.{% endif %}{% endblock %}
+{% block keywords %}{{ aktif_kategori }}, haber, gündem, son dakika, Türkiye{% endblock %}
+
+{% block content %}
+{% if aktif_kategori == 'tumu' %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="hero-section">
+            {% if news %}
+            <a href="/haber/{{ news[0].id }}" class="text-decoration-none" style="color: inherit;">
+                <span class="category-badge" style="background: var(--accent); color: white;">MANŞET</span>
+                <h1 class="main-headline mt-2">{{ news[0].title }}</h1>
+                <p class="sub-headline">{{ news[0].summary[:150] }}...</p>
+                <div class="d-flex gap-3 mt-2 small text-muted">
+                    <span><i class="bi bi-clock"></i> {{ news[0].date }}</span>
+                    {% if news[0].source %}<span><i class="bi bi-building"></i> {{ news[0].source }}</span>{% endif %}
+                </div>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-4">
+        {% if news|length > 1 %}
+        <a href="/haber/{{ news[1].id }}" class="text-decoration-none">
+            <div class="hero-feat-card h-100">
+                <span class="cat-label">SON DAKIKA</span>
+                <h5 class="mt-1">{{ news[1].title[:60] }}</h5>
+                <p class="small text-white-50 mt-1">{{ news[1].summary[:80] }}...</p>
+                <small class="text-white-50">{{ news[1].date }}</small>
+            </div>
+        </a>
+        {% endif %}
+        {% if news|length > 2 %}
+        <a href="/haber/{{ news[2].id }}" class="text-decoration-none">
+            <div class="hero-feat-card h-100 mt-2" style="background: var(--red);">
+                <span class="cat-label" style="color: white;">ÖZEL</span>
+                <h5 class="mt-1">{{ news[2].title[:60] }}</h5>
+                <p class="small text-white-50 mt-1">{{ news[2].summary[:80] }}...</p>
+                <small class="text-white-50">{{ news[2].date }}</small>
+            </div>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-lg-8">
+        {% if aktif_kategori != 'tumu' %}
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="category-badge" style="background: var(--red); color: white; font-size: 13px; padding: 3px 14px;">
+                {{ cat_info[aktif_kategori]['name'] }}
+            </span>
+            <p class="text-muted small mb-0">{{ cat_info[aktif_kategori]['desc'] }}</p>
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0 section-title d-inline-block">
+                {% if aktif_kategori == 'tumu' %}Son Haberler{% endif %}
+            </h5>
+            <div class="d-flex flex-wrap gap-1">
+                {% for cat in categories %}
+                <a href="/{{ cat }}" class="btn btn-sm {% if aktif_kategori == cat %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    {{ cat_info[cat]['name'][:8] }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row g-3" id="newsContainer">
+            {% for haber in news %}
+            <div class="col-md-6 news-item">
+                <article class="news-card h-100" onclick="window.location='/haber/{{ haber.id }}'" role="link" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')window.location='/haber/{{ haber.id }}'">
+                    <div class="news-image lazy-bg" data-src="{{ haber.image }}" style="background-color: #e9ecef;">
+                        <span class="category-badge">{{ cat_info[haber.category]['name'] if haber.category in cat_info else haber.category|upper }}</span>
+                        {% if haber.reading_time %}
+                        <span class="reading-time"><i class="bi bi-clock"></i> {{ haber.reading_time }} dk</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <div class="news-meta mb-1">
+                            <span>{{ haber.date }}</span>
+                            {% if haber.source %} · <span>{{ haber.source }}</span>{% endif %}
+                        </div>
+                        <h5>{{ haber.title }}</h5>
+                        <p class="text-muted small flex-grow-1">{{ haber.summary[:100] }}{% if haber.summary|length > 100 %}...{% endif %}</p>
+                        <div class="news-meta mt-auto">
+                            <span><i class="bi bi-eye"></i> {{ haber.views }}</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if toplam > news|length %}
+        <div class="text-center mt-3">
+            <button class="btn btn-outline-primary" id="loadMore" onclick="loadMore()" data-sayfa="{{ sayfa }}" data-kategori="{{ aktif_kategori }}">
+                <i class="bi bi-arrow-down-circle"></i> Daha Fazla Haber
+            </button>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header fw-bold"><i class="bi bi-fire me-1" style="color: var(--red);"></i> Çok Okunanlar</div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for haber in trending %}
+                    <li class="list-group-item">
+                        <a href="/haber/{{ haber.id }}" class="text-decoration-none" style="color: var(--text);">
+                            <div class="d-flex gap-2 align-items-center">
+                                <span class="trend-number">{{ loop.index }}</span>
+                                <div>
+                                    <small class="text-muted">{{ cat_info[haber.category]['name'] if haber.category in cat_info else haber.category|title }}</small>
+                                    <p class="mb-0 fw-semibold small">{{ haber.title[:55] }}{% if haber.title|length > 55 %}...{% endif %}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header fw-bold"><i class="bi bi-currency-exchange me-1" style="color: var(--red);"></i> Kripto Para</div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for c in crypto_prices[:4] %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><strong>{{ c.symbol }}</strong></span>
+                        <span>
+                            <span class="fw-bold me-2">${{ c.price }}</span>
+                            <span class="{% if c.is_up %}text-success{% else %}text-danger{% endif %} small">{{ c.change_24h }}%</span>
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="p-2 text-center">
+                    <a href="/finans" class="btn btn-outline-primary btn-sm w-100">Detaylı Finans <i class="bi bi-arrow-right"></i></a>
+                </div>
+                <div class="p-2 text-center">
+                    <small class="text-muted" style="font-size: 10px;">Veri: <a href="https://www.coingecko.com" target="_blank" rel="noopener noreferrer" class="text-muted">CoinGecko</a></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header fw-bold"><i class="bi bi-play-circle me-1" style="color: var(--red);"></i> Video</div>
+            <div class="card-body p-0">
+                <a href="/video" class="text-decoration-none">
+                    <div class="d-flex align-items-center justify-content-center" style="background: var(--accent); height: 120px; flex-direction: column;">
+                        <i class="bi bi-play-circle-fill display-5" style="color: var(--red);"></i>
+                        <span class="mt-2 text-white small fw-semibold">Video Haberler</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header fw-bold"><i class="bi bi-cloud-sun me-1" style="color: var(--red);"></i> Hava Durumu</div>
+            <div class="card-body">
+                {% if weather %}
+                <div class="d-flex align-items-center gap-3">
+                    {% if weather.icon %}<img src="https://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="" width="60" height="60">{% endif %}
+                    <div>
+                        <h3 class="mb-0 fw-bold">{{ weather.temp }}°C</h3>
+                        <small class="text-muted">{{ weather.city }}, {{ weather.country }}</small>
+                        <p class="mb-0 small text-muted">{{ weather.description }}</p>
+                    </div>
+                </div>
+                <div class="row mt-2 text-center small">
+                    <div class="col-4"><i class="bi bi-droplet"></i> {{ weather.humidity }}%</div>
+                    <div class="col-4"><i class="bi bi-wind"></i> {{ weather.wind }} km/h</div>
+                    <div class="col-4"><i class="bi bi-thermometer-half"></i> {{ weather.feels_like }}°</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h6 class="fw-bold"><i class="bi bi-envelope me-1" style="color: var(--red);"></i> Bültene Abone Ol</h6>
+                <p class="small text-muted">Günlük haber özeti emailinize gelsin.</p>
+                <div class="input-group input-group-sm">
+                    <input type="email" id="sidebar-newsletter" class="form-control" placeholder="E-posta">
+                    <button class="btn btn-primary" onclick="sidebarNewsletter()">Abone</button>
+                </div>
+                <div id="sidebar-newsletter-msg" class="small mt-1 text-muted"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

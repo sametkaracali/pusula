@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Finans - BIST, Döviz, Kripto - Pusula{% endblock %}
+{% block description %}Canlı BIST 100 endeksi, döviz kurları, kripto para fiyatları ve hisse senedi verileri. Güncel finans verileri Pusula'de.{% endblock %}
+
+{% block content %}
+<h1 class="fw-bold mb-4" style="font-family: 'Playfair Display', serif;"><i class="bi bi-currency-exchange" style="color: var(--red);"></i> Finans Piyasaları</h1>
+
+<div class="row g-3 mb-4">
+    {% for item in [('BIST 100', bist.xu100, '% -0.63', 'bi-graph-up-arrow', '#2d6a4f'), ('BIST 30', bist.xu030, '% -0.63', 'bi-graph-up-arrow', '#1b4965'), ('XBANK', bist.xbank, '% +0.31', 'bi-bank', '#c9a84c'), ('XSINA', bist.xusin, '% -0.65', 'bi-building', '#8d6e63'), ('XUTEK', bist.xutek, '% -1.14', 'bi-cpu', '#b34180')] %}
+    <div class="col-md-4">
+        <div class="card h-100 text-center" style="border-bottom: 3px solid {{ item[4] }};">
+            <div class="card-body">
+                <i class="bi {{ item[3] }} display-5" style="color: {{ item[4] }};"></i>
+                <h5 class="fw-bold mt-2">{{ item[0] }}</h5>
+                <h2 class="fw-bold" style="color: {{ item[4] }};">{{ item[1] }}</h2>
+                <small class="text-muted">{{ item[2] }}</small>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header fw-bold" style="border-bottom-color: var(--red);"><i class="bi bi-currency-dollar" style="color: var(--red);"></i> Döviz Kurları</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                <table class="table table-borderless mb-0">
+                    <thead class="table-light"><tr><th>Kur</th><th class="text-end">Alış</th><th class="text-end">Satış</th></tr></thead>
+                    <tbody>
+                        {% for kur, deger in doviz.items() %}
+                        <tr>
+                            <td>
+                                {% if kur == 'USD' %}<i class="bi bi-currency-dollar text-success"></i>
+                                {% elif kur == 'EUR' %}<i class="bi bi-currency-euro text-info"></i>
+                                {% elif kur == 'GBP' %}<i class="bi bi-currency-pound text-warning"></i>
+                                {% elif kur == 'CHF' %}<i class="bi bi-currency-swiss text-secondary"></i>
+                                {% elif kur == 'GA' %}<i class="bi bi-gem text-danger"></i>
+                                {% else %}<i class="bi bi-circle"></i>{% endif %}
+                                {{ kur }}/TRY
+                            </td>
+                            <td class="text-end fw-semibold">{{ deger }}</td>
+                            <td class="text-end text-muted">-</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header fw-bold" style="border-bottom-color: var(--red);"><i class="bi bi-coin" style="color: var(--red);"></i> Kripto Para <small class="text-muted float-end" style="font-size: 10px;">Veri: <a href="https://www.coingecko.com" target="_blank" rel="noopener noreferrer" class="text-muted">CoinGecko</a></small></div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                <table class="table table-borderless mb-0">
+                    <thead class="table-light"><tr><th>Coin</th><th class="text-end">Fiyat</th><th class="text-end">24s Değişim</th><th class="text-end">Hacim</th></tr></thead>
+                    <tbody>
+                        {% for c in kripto %}
+                        <tr>
+                            <td class="fw-bold">
+                                {% if c.symbol == 'BTC' %}<i class="bi bi-currency-bitcoin text-warning"></i>
+                                {% elif c.symbol == 'ETH' %}<i class="bi bi-currency-ethereum text-info"></i>
+                                {% else %}<i class="bi bi-coin"></i>{% endif %}
+                                {{ c.symbol }}
+                            </td>
+                            <td class="text-end fw-bold">${{ c.price }}</td>
+                            <td class="text-end {% if c.is_up %}text-success{% else %}text-danger{% endif %}">
+                                {{ c.change_24h }}%
+                            </td>
+                            <td class="text-end text-muted">{{ c.volume_24h }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header fw-bold" style="border-bottom-color: var(--red);"><i class="bi bi-building" style="color: var(--red);"></i> BIST 30 Hisseleri</div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+        <table class="table table-borderless mb-0">
+            <thead class="table-light"><tr><th>Sembol</th><th>Şirket</th><th class="text-end">Fiyat</th><th class="text-end">Değişim</th></tr></thead>
+            <tbody>
+                {% for h in hisseler %}
+                <tr>
+                    <td class="fw-bold">{{ h.sembol }}</td>
+                    <td>{{ h.ad }}</td>
+                    <td class="text-end">{{ h.fiyat }}</td>
+                    <td class="text-end {% if h.degisim|float >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {{ h.degisim }}%
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header fw-bold" style="border-bottom-color: var(--red);"><i class="bi bi-calculator" style="color: var(--red);"></i> Kripto Çevirici</div>
+    <div class="card-body">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small">Miktar</label>
+                <input type="number" class="form-control" id="cryptoAmount" value="1" min="0" step="any" oninput="cryptoConvert()">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Coin</label>
+                <select class="form-select" id="cryptoFrom" onchange="cryptoConvert()">
+                    <option value="BTC">Bitcoin (BTC)</option>
+                    <option value="ETH">Ethereum (ETH)</option>
+                    <option value="SOL">Solana (SOL)</option>
+                    <option value="XRP">XRP</option>
+                    <option value="DOGE">Dogecoin (DOGE)</option>
+                    <option value="BNB">BNB</option>
+                </select>
+            </div>
+            <div class="col-md-1 text-center">
+                <i class="bi bi-arrow-right fs-4" style="color: var(--red);"></i>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Birim</label>
+                <select class="form-select" id="cryptoTo" onchange="cryptoConvert()">
+                    <option value="USD">USD</option>
+                    <option value="TRY" selected>TL (TRY)</option>
+                    <option value="EUR">Euro (EUR)</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Sonuç</label>
+                <div class="form-control bg-light fw-bold" id="cryptoResult">-</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const cryptoData = {{ kripto|tojson }};
+function cryptoConvert() {
+    const amount = parseFloat(document.getElementById('cryptoAmount').value) || 0;
+    const from = document.getElementById('cryptoFrom').value;
+    const to = document.getElementById('cryptoTo').value;
+
+    const coin = cryptoData.find(c => c.symbol === from);
+    if (!coin) { document.getElementById('cryptoResult').textContent = '-'; return; }
+
+    const usdPrice = parseFloat(coin.price.replace(',', '')) || 0;
+    let result = amount * usdPrice;
+
+    if (to === 'TRY') {
+        result *= 46.48;  // 1 USD = 46.48 TL
+        document.getElementById('cryptoResult').textContent = result.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' TL';
+    } else if (to === 'EUR') {
+        result /= 1.15;  // approximate USD/EUR
+        document.getElementById('cryptoResult').textContent = result.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+    } else {
+        document.getElementById('cryptoResult').textContent = '$ ' + result.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+}
+cryptoConvert();
+</script>
+{% endblock %}

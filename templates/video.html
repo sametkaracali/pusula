@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Video Haberler - Pusula{% endblock %}
+{% block description %}Pusula video haberler. Ekonomi, spor, teknoloji ve gündeme dair video içerikler.{% endblock %}
+
+{% block content %}
+<h1 class="fw-bold mb-3" style="font-family: 'Playfair Display', serif;"><i class="bi bi-play-circle" style="color: var(--red);"></i> Video Haberler</h1>
+
+<div class="d-flex flex-wrap gap-2 mb-4">
+    <a href="/video" class="btn btn-sm {% if not aktif_kategori %}btn-primary{% else %}btn-outline-primary{% endif %}">Tümü</a>
+    {% for cat in categories %}
+    {% if cat in ['ekonomi','spor','teknoloji','gundem','dunya','bilim','saglik','sanat','magazin'] %}
+    <a href="/video?kategori={{ cat }}" class="btn btn-sm {% if aktif_kategori == cat %}btn-primary{% else %}btn-outline-primary{% endif %}">
+        {{ cat_info[cat]['name'][:10] }}
+    </a>
+    {% endif %}
+    {% endfor %}
+</div>
+
+{% if featured %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0">
+            <div class="ratio ratio-16x9">
+                <iframe src="https://www.youtube.com/embed/{{ featured.youtube }}?autoplay=1&rel=0" title="{{ featured.title }}" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="card-body">
+                <span class="category-badge category-{{ featured.category }}">{{ cat_info[featured.category]['name'] if featured.category in cat_info else featured.category|title }}</span>
+                <h4 class="fw-bold mt-2">{{ featured.title }}</h4>
+                <div class="d-flex gap-3 text-muted small">
+                    <span><i class="bi bi-eye"></i> {{ featured.views }} görüntülenme</span>
+                    <span><i class="bi bi-calendar3"></i> {{ featured.date }}</span>
+                    {% if featured.author %}<span><i class="bi bi-person"></i> {{ featured.author }}</span>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-3">
+    {% for video in videolar %}
+    <div class="col-md-4 col-sm-6">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="ratio ratio-16x9">
+                <iframe src="https://www.youtube.com/embed/{{ video.youtube }}?rel=0" title="{{ video.title }}" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <div class="card-body">
+                <span class="category-badge category-{{ video.category }}" style="font-size:9px;">{{ cat_info[video.category]['name'] if video.category in cat_info else video.category|title }}</span>
+                <h6 class="fw-bold mt-2" style="font-size:0.9rem;">{{ video.title[:50] }}{% if video.title|length > 50 %}...{% endif %}</h6>
+                <div class="d-flex justify-content-between text-muted small mt-2">
+                    <span><i class="bi bi-eye"></i> {{ video.views }}</span>
+                    <span>{{ video.date }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-play-circle" style="font-size:3rem;color:var(--text-muted);"></i>
+                <p class="mt-2 text-muted">Henüz video bulunamadı.</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

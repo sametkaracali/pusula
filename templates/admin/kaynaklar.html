@@ -1,0 +1,66 @@
+{% extends "admin/base.html" %}
+{% block title %}RSS Kaynakları{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-rss"></i> RSS Kaynakları</h2>
+
+<div class="card bg-dark border-secondary mb-3">
+    <div class="card-header bg-transparent border-secondary">
+        <h5 class="mb-0 text-white">Yeni Kaynak Ekle</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" class="row g-2">
+            <div class="col-md-3">
+                <select name="category" class="form-select bg-dark text-white border-secondary">
+                    {% for cat in config.CATEGORY_INFO %}
+                    <option value="{{ cat }}">{{ config.CATEGORY_INFO[cat]['name'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-7">
+                <input type="url" name="url" class="form-control bg-dark text-white border-secondary" placeholder="RSS URL" required>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i> Ekle</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card bg-dark border-secondary">
+    <div class="card-body p-0">
+        <table class="table table-dark table-striped mb-0">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Kategori</th>
+                    <th>URL</th>
+                    <th>Durum</th>
+                    <th>İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for src in sources %}
+                <tr>
+                    <td>{{ src.id }}</td>
+                    <td><span class="badge bg-primary">{{ src.category }}</span></td>
+                    <td><small>{{ src.url }}</small></td>
+                    <td>
+                        <span class="badge {% if src.active %}bg-success{% else %}bg-secondary{% endif %}">
+                            {{ 'Aktif' if src.active else 'Pasif' }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/admin/kaynak-toggle/{{ src.id }}" class="btn btn-sm btn-warning">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </a>
+                        <form method="POST" action="/admin/kaynak-sil/{{ src.id }}" style="display:inline;" onsubmit="return confirm('Silmek istediğine emin misin?')">
+                            <button class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Kaydedilenler - Pusula{% endblock %}
+{% block description %}Kaydettiğiniz haberler.{% endblock %}
+
+{% block content %}
+<h1 class="fw-bold mb-4" style="font-family: 'Playfair Display', serif;"><i class="bi bi-bookmark-fill" style="color: var(--red);"></i> Kaydedilenler</h1>
+
+<div id="kaydedilenlerContainer">
+    <div class="text-center py-5" id="loadingState">
+        <div class="spinner-border" role="status"></div>
+        <p class="mt-2 text-muted">Haberler yükleniyor...</p>
+    </div>
+</div>
+
+<script>
+async function loadSaved() {
+    const savedIds = getSavedIds();
+    const container = document.getElementById('kaydedilenlerContainer');
+
+    if (savedIds.length === 0) {
+        container.innerHTML = `
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-bookmark" style="font-size: 3rem; color: var(--text-muted);"></i>
+                    <p class="mt-3 text-muted">Henüz haber kaydetmediniz.</p>
+                    <a href="/" class="btn btn-primary">Ana Sayfa</a>
+                </div>
+            </div>`;
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/load-saved', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ids: savedIds})
+        });
+        const data = await res.json();
+
+        if (data.news && data.news.length > 0) {
+            let html = '<div class="row g-3">';
+            data.news.forEach(h => {
+                html += `
+                    <div class="col-md-6">
+                        <article class="news-card h-100" onclick="window.location='/haber/${h.id}'" role="link" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')window.location='/haber/${h.id}'">
+                            <div class="news-image rounded-0" style="background-image: url('${h.image}');">
+                                <span class="category-badge category-${h.category}">${(h.category || '').toUpperCase()}</span>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted"><i class="bi bi-calendar3"></i> ${h.date || ''}</small>
+                                    <small class="text-muted"><i class="bi bi-eye"></i> ${h.views || 0}</small>
+                                </div>
+                                <h5 class="fw-bold">${h.title}</h5>
+                                <p class="text-muted small flex-grow-1">${(h.summary || '').substring(0, 120)}...</p>
+                            </div>
+                        </article>
+                    </div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-bookmark" style="font-size: 3rem; color: var(--text-muted);"></i>
+                        <p class="mt-3 text-muted">Kaydedilen haberler bulunamadı.</p>
+                        <a href="/" class="btn btn-primary">Ana Sayfa</a>
+                    </div>
+                </div>`;
+        }
+    } catch (e) {
+        container.innerHTML = `<div class="alert alert-danger">Haberler yüklenirken hata oluştu.</div>`;
+    }
+}
+document.addEventListener('DOMContentLoaded', loadSaved);
+</script>
+{% endblock %}

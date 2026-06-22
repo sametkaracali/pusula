@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}İletişim - Pusula{% endblock %}
+{% block description %}Pusula ile iletişim bilgileri, künye ve yasal bilgiler.{% endblock %}
+
+{% block content %}
+<h1 class="fw-bold mb-4" style="font-family: 'Playfair Display', serif;"><i class="bi bi-envelope" style="color: var(--red);"></i> İletişim & Künye</h1>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header fw-bold" style="border-bottom-color: var(--red);">İletişim</div>
+            <div class="card-body">
+                <p class="text-muted">Sorularınız, önerileriniz veya haber bildirimleriniz için bize ulaşabilirsiniz.</p>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="bi bi-envelope me-2" style="color: var(--red);"></i> <strong>E-posta:</strong> <a href="mailto:iletisim@pusula.com">iletisim@pusula.com</a></li>
+                    <li class="mb-2"><i class="bi bi-twitter-x me-2" style="color: var(--red);"></i> <strong>Twitter/X:</strong> <a href="https://twitter.com/PusulaHaber" rel="noopener noreferrer nofollow" target="_blank">@PusulaHaber</a></li>
+                </ul>
+                <hr>
+                <h6 class="fw-bold">Haber Bildir</h6>
+                <p class="small text-muted">Bir haberin paylaşılmasını istiyorsanız veya bir hata bildirecekseniz e-posta gönderebilirsiniz.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header fw-bold" style="border-bottom-color: var(--red);">Künye</div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2"><strong>Site Adı:</strong> Pusula</li>
+                    <li class="mb-2"><strong>Yayıncı:</strong> Pusula Haber Platformu</li>
+                    <li class="mb-2"><strong>Adres:</strong> İstanbul, Türkiye</li>
+                    <li class="mb-2"><strong>E-posta:</strong> iletisim@pusula.com</li>
+                    <li class="mb-2"><strong>Hukuki Temsilci:</strong> Site sahibi</li>
+                    <li class="mb-2"><strong>İçerik Türü:</strong> Haber toplama ve derleme platformu</li>
+                </ul>
+                <p class="small text-muted mt-3">Pusula, çeşitli haber kaynaklarından topladığı haberleri tek bir platformda sunan bir haber derleme sitesidir. Sitede yayınlanan haberlerin telif hakları ilgili haber kaynaklarına aittir.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info mt-3">
+    <i class="bi bi-info-circle me-2"></i>
+    <strong>Telif Hakkı İhlali Bildirimi:</strong> Sitede yer alan bir haberin telif hakkınızı ihlal ettiğini düşünüyorsanız, lütfen <strong>iletisim@pusula.com</strong> adresine konuyla ilgili belgelerle birlikte e-posta gönderin. En kısa sürede içeriği kaldıracağız.
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card bg-dark border-secondary">
+            <div class="card-body">
+                <h6 class="card-title text-white-50">Toplam Haber</h6>
+                <h2 class="text-white mb-0">{{ stats.total_news }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark border-secondary">
+            <div class="card-body">
+                <h6 class="card-title text-white-50">Toplam Görüntüleme</h6>
+                <h2 class="text-white mb-0">{{ stats.total_views }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark border-secondary">
+            <div class="card-body">
+                <h6 class="card-title text-white-50">Yorumlar</h6>
+                <h2 class="text-white mb-0">{{ stats.total_comments }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-dark border-secondary">
+            <div class="card-body">
+                <h6 class="card-title text-white-50">E-posta Abonesi</h6>
+                <h2 class="text-white mb-0">{{ stats.total_subscribers }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header bg-transparent border-secondary">
+                <h5 class="mb-0 text-white"><i class="bi bi-fire"></i> En Çok Okunanlar</h5>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush bg-transparent">
+                    {% for h in trending %}
+                    <li class="list-group-item bg-transparent text-white border-secondary">
+                        <a href="/haber/{{ h.id }}" class="text-white text-decoration-none" target="_blank">
+                            {{ h.title[:60] }} <small class="text-white-50">({{ h.views }} okunma)</small>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header bg-transparent border-secondary">
+                <h5 class="mb-0 text-white"><i class="bi bi-rss"></i> RSS Kaynakları</h5>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush bg-transparent">
+                    {% for src in sources %}
+                    <li class="list-group-item bg-transparent text-white border-secondary">
+                        <span class="badge bg-primary me-1">{{ src.category }}</span>
+                        <small>{{ src.url.split('//')[1] if '//' in src.url else src.url }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

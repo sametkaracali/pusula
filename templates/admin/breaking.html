@@ -1,0 +1,44 @@
+{% extends "admin/base.html" %}
+{% block title %}Breaking News{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-lightning-fill text-warning"></i> Breaking News Yönetimi</h2>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card bg-dark border-warning">
+            <div class="card-header bg-transparent border-warning text-warning">
+                <h5 class="mb-0">Breaking Haberler</h5>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush bg-transparent">
+                    {% for h in breaking %}
+                    <li class="list-group-item bg-transparent text-white border-secondary d-flex justify-content-between align-items-center">
+                        <a href="/haber/{{ h.id }}" class="text-white text-decoration-none small" target="_blank">{{ h.title[:50] }}</a>
+                        <a href="/admin/breaking-cikar/{{ h.id }}" class="btn btn-sm btn-outline-warning"><i class="bi bi-x-lg"></i></a>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item bg-transparent text-white-50">Breaking haber yok</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header bg-transparent border-secondary">
+                <h5 class="mb-0 text-white">Son Haberler</h5>
+            </div>
+            <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                <ul class="list-group list-group-flush bg-transparent">
+                    {% for h in news %}
+                    <li class="list-group-item bg-transparent text-white border-secondary d-flex justify-content-between align-items-center">
+                        <small>{{ h.title[:45] }}</small>
+                        <a href="/admin/breaking-ekle/{{ h.id }}" class="btn btn-sm btn-outline-warning"><i class="bi bi-lightning"></i></a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

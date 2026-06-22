@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{% if query %}"{{ query }}" için arama sonuçları - Pusula{% else %}Haber Ara - Pusula{% endif %}{% endblock %}
+
+{% block content %}
+<h2 class="fw-bold mb-4" style="font-family: 'Playfair Display', serif;"><i class="bi bi-search" style="color: var(--red);"></i> Haber Ara</h2>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <form action="/ara" method="GET">
+            <div class="input-group input-group-lg">
+                <input type="text" class="form-control" name="q" value="{{ query }}" placeholder="Haber başlığı veya kelime ara..." aria-label="Arama">
+                <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Ara</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if query %}
+<div class="mb-3">
+    <h5 class="fw-bold">"{{ query }}" için {{ sonuclar|length }} sonuç bulundu</h5>
+</div>
+
+<div class="row g-3">
+    {% for haber in sonuclar %}
+    <div class="col-md-6">
+        <article class="news-card h-100" onclick="window.location='/haber/{{ haber.id }}'" role="link" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')window.location='/haber/{{ haber.id }}'">
+            <div class="news-image lazy-bg" data-src="{{ haber.image }}" style="background-color: #e9ecef;">
+                <span class="category-badge category-{{ haber.category }}">{{ cat_info[haber.category]['name'] if haber.category in cat_info else haber.category|upper }}</span>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-muted"><i class="bi bi-calendar3"></i> {{ haber.date }}</small>
+                    <small class="text-muted"><i class="bi bi-eye"></i> {{ haber.views }}</small>
+                </div>
+                <h5 class="fw-bold">{{ haber.title }}</h5>
+                <p class="text-muted small flex-grow-1">{{ haber.summary[:150] }}...</p>
+                <small class="text-muted"><i class="bi bi-building"></i> {{ haber.source }}</small>
+            </div>
+        </article>
+    </div>
+    {% endfor %}
+</div>
+
+{% if sonuclar|length == 0 %}
+<div class="text-center py-5">
+    <i class="bi bi-search-heart display-1" style="color: var(--text-muted);"></i>
+    <h5 class="mt-3">Sonuç bulunamadı</h5>
+    <p class="text-muted">Farklı bir kelime ile tekrar deneyin.</p>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

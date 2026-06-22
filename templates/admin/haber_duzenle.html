@@ -1,0 +1,81 @@
+{% extends "admin/base.html" %}
+{% block title %}Haberi Düzenle{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-pencil"></i> Haberi Düzenle</h2>
+
+<form method="POST" class="row g-3">
+    <div class="col-md-8">
+        <label class="form-label text-white-50">Başlık *</label>
+        <input type="text" name="title" class="form-control bg-dark text-white border-secondary" value="{{ haber.title }}" required>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label text-white-50">Kategori</label>
+        <select name="category" class="form-select bg-dark text-white border-secondary">
+            {% for cat in config.CATEGORY_INFO %}
+            <option value="{{ cat }}" {% if haber.category == cat %}selected{% endif %}>{{ config.CATEGORY_INFO[cat]['name'] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label text-white-50">Kaynak</label>
+        <input type="text" name="source" class="form-control bg-dark text-white border-secondary" value="{{ haber.source }}">
+    </div>
+    <div class="col-md-4">
+        <label class="form-label text-white-50">Yazar</label>
+        <input type="text" name="author" class="form-control bg-dark text-white border-secondary" value="{{ haber.author }}">
+    </div>
+    <div class="col-md-4">
+        <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" name="is_breaking" value="1" id="breaking" {% if haber.is_breaking %}checked{% endif %}>
+            <label class="form-check-label text-white-50" for="breaking"><i class="bi bi-lightning-fill text-warning"></i> Breaking Haber</label>
+        </div>
+    </div>
+    <div class="col-12">
+        <label class="form-label text-white-50">Özet</label>
+        <textarea name="summary" class="form-control bg-dark text-white border-secondary" rows="3">{{ haber.summary }}</textarea>
+    </div>
+    <div class="col-12">
+        <label class="form-label text-white-50">İçerik (HTML destekli)</label>
+        <textarea name="content" class="form-control bg-dark text-white border-secondary font-monospace" rows="10">{{ haber.content }}</textarea>
+    </div>
+    <div class="col-12">
+        <label class="form-label text-white-50">Kapak Görseli URL</label>
+        <input type="url" name="image" class="form-control bg-dark text-white border-secondary" value="{{ haber.image }}">
+    </div>
+
+    <div class="col-12">
+        <label class="form-label text-white-50 fw-bold"><i class="bi bi-images"></i> Görsel Galerisi</label>
+        <div id="galleryContainer">
+            {% for img in (haber.gallery or []) %}
+            <div class="row g-2 mb-2">
+                <div class="col-8"><input type="url" name="gallery_url_{{ loop.index0 }}" class="form-control form-control-sm bg-dark text-white border-secondary" value="{{ img.url }}" placeholder="Görsel URL"></div>
+                <div class="col-4"><input type="text" name="gallery_cap_{{ loop.index0 }}" class="form-control form-control-sm bg-dark text-white border-secondary" value="{{ img.caption }}" placeholder="Açıklama"></div>
+            </div>
+            {% else %}
+            <div class="row g-2 mb-2">
+                <div class="col-8"><input type="url" name="gallery_url_0" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Görsel URL"></div>
+                <div class="col-4"><input type="text" name="gallery_cap_0" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Açıklama"></div>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-info" onclick="addGalleryRow()"><i class="bi bi-plus-lg"></i> Görsel Ekle</button>
+    </div>
+
+    <div class="col-12 mt-3">
+        <button type="submit" class="btn btn-warning"><i class="bi bi-floppy"></i> Güncelle</button>
+        <a href="/admin/haberler" class="btn btn-secondary">İptal</a>
+    </div>
+</form>
+
+<script>
+let galleryCount = {{ (haber.gallery or [])|length }};
+function addGalleryRow() {
+    const container = document.getElementById('galleryContainer');
+    const row = document.createElement('div');
+    row.className = 'row g-2 mb-2';
+    row.innerHTML = `<div class="col-8"><input type="url" name="gallery_url_${galleryCount}" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Görsel URL"></div><div class="col-4"><input type="text" name="gallery_cap_${galleryCount}" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Açıklama"></div>`;
+    container.appendChild(row);
+    galleryCount++;
+}
+</script>
+{% endblock %}

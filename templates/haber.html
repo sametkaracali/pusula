@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+{% block title %}{{ haber.meta_title or haber.title }} - Pusula{% endblock %}
+{% block description %}{{ haber.meta_description or haber.summary[:160] }}{% endblock %}
+{% block keywords %}{{ haber.keywords|join(', ') if haber.keywords else haber.category }}{% endblock %}
+{% block og_title %}{{ haber.title }}{% endblock %}
+{% block og_description %}{{ haber.summary[:160] }}{% endblock %}
+{% block og_image %}{{ haber.image }}{% endblock %}
+{% block twitter_title %}{{ haber.title }}{% endblock %}
+{% block twitter_description %}{{ haber.summary[:160] }}{% endblock %}
+{% block twitter_image %}{{ haber.image }}{% endblock %}
+{% block meta %}
+{{ super() }}
+<meta property="article:published_time" content="{{ haber.date }}">
+<meta property="article:section" content="{{ cat_info[haber.category]['name'] if haber.category in cat_info else haber.category|title }}">
+<meta property="article:author" content="{{ haber.author or 'Pusula' }}">
+{% if haber.keywords %}<meta name="news_keywords" content="{{ haber.keywords|join(', ') }}">{% endif %}
+{% if haber.keywords %}{% for kw in haber.keywords %}<meta property="article:tag" content="{{ kw }}">{% endfor %}{% endif %}
+{% endblock %}
+{% block schema %}
+{{ super() }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": "{{ haber.title }}",
+  "description": "{{ haber.summary[:200] }}",
+  "image": "{{ haber.image }}",
+  "datePublished": "{{ haber.date }}",
+  "dateModified": "{{ haber.date }}",
+  "author": {"@type": "Person", "name": "{{ haber.author or 'Pusula' }}"},
+  "publisher": {"@type": "Organization", "name": "Pusula"},
+  "mainEntityOfPage": {"@type": "WebPage", "@id": "{{ request.url }}"}
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": "https://pusula.com/"},
+    {"@type": "ListItem", "position": 2, "name": "{{ cat_info[haber.category]['name'] if haber.category in cat_info else haber.category|title }}", "item": "https://pusula.com/{{ haber.category }}"},
+    {"@type": "ListItem", "position": 3, "name": "{{ haber.title[:40] }}"}
+  ]
+}
+</script>
+{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="container py-1">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+        <li class="breadcrumb-item"><a href="/{{ haber.category }}">{{ cat_info[haber.category]['name'] if haber.category in cat_info else haber.category|title }}</a></li>
+        <li class="breadcrumb-item active">{{ haber.title[:40] }}...</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="category-badge">{{ cat_info[haber.category]['name'] if haber.category in cat_info else haber.category|upper }}</span>
+            {% if haber.is_breaking %}<span class="badge bg-danger live-badge"><i class="bi bi-lightning-fill"></i> SON DAKİKA</span>{% endif %}
+        </div>
+        <h1 class="fw-bold display-6 mb-3">{{ haber.title }}</h1>
+
+        <div class="d-flex flex-wrap gap-3 mb-3 text-muted small">
+            {% if haber.author %}<span><i class="bi bi-person"></i> {{ haber.author }}</span>{% endif %}
+            <span><i class="bi bi-building"></i> {{ haber.source }}</span>
+            <span><i class="bi bi-calendar3"></i> {{ haber.date }}</span>
+            {% if haber.reading_time %}<span><i class="bi bi-clock"></i> {{ haber.reading_time }} dk okuma</span>{% endif %}
+            <span><i class="bi bi-eye"></i> {{ haber.views }} okunma</span>
+        </div>
+
+        <div class="share-buttons mb-3 d-flex flex-wrap align-items-center gap-1">
+            <span class="fw-semibold me-2 small">Paylaş:</span>
+            <button class="btn btn-outline-primary btn-sm" onclick="webShare()" title="Paylaş"><i class="bi bi-share"></i></button>
+            <button class="btn btn-outline-warning btn-sm save-btn" onclick="toggleSave({{ haber.id }})" title="Kaydet"><i class="bi bi-bookmark"></i></button>
+            <a href="https://wa.me/?text={{ haber.title }}%20{{ request.url }}" target="_blank" class="btn btn-success btn-sm" rel="noopener"><i class="bi bi-whatsapp"></i></a>
+            <a href="https://twitter.com/intent/tweet?text={{ haber.title }}&url={{ request.url }}" target="_blank" class="btn btn-dark btn-sm" rel="noopener"><i class="bi bi-twitter-x"></i></a>
+            <a href="https://t.me/share/url?url={{ request.url }}&text={{ haber.title }}" target="_blank" class="btn btn-sm" style="background:#0088cc;color:white;" rel="noopener"><i class="bi bi-telegram"></i></a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank" class="btn btn-primary btn-sm" rel="noopener"><i class="bi bi-facebook"></i></a>
+            <button class="btn btn-outline-primary btn-sm" onclick="copyLink()" title="Link kopyala"><i class="bi bi-link-45deg"></i></button>
+        </div>
+
+        {% if haber.gallery and haber.gallery|length > 0 %}
+        <div class="gallery-container mb-3 position-relative">
+            <div class="gallery-slider">
+                {% for img in haber.gallery %}
+                <div class="gallery-slide {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}">
+                    <img src="{{ img.url }}" alt="{{ img.caption or haber.title }}" class="img-fluid w-100 gallery-img" loading="lazy" onclick="openLightbox({{ loop.index0 }})" style="max-height:450px;object-fit:cover;cursor:pointer;">
+                    {% if img.caption %}<div class="gallery-caption">{{ img.caption }}</div>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% if haber.gallery|length > 1 %}
+            <button class="gallery-nav prev" onclick="changeSlide(-1)"><i class="bi bi-chevron-left"></i></button>
+            <button class="gallery-nav next" onclick="changeSlide(1)"><i class="bi bi-chevron-right"></i></button>
+            <div class="gallery-dots text-center mt-2">
+                {% for img in haber.gallery %}
+                <span class="gallery-dot {% if loop.first %}active{% endif %}" onclick="goToSlide({{ loop.index0 }})"></span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <figure class="mb-3">
+            <img src="{{ haber.image }}" class="img-fluid w-100" alt="{{ haber.title }}" style="max-height:400px;object-fit:cover;cursor:pointer;" loading="lazy" onclick="openLightbox(0)" onerror="this.onerror=null;this.src='https://picsum.photos/seed/fallback/800/400'">
+        </figure>
+        {% endif %}
+
+        <div class="news-content lh-lg">
+            <p class="fw-semibold lead text-muted">{{ haber.summary }}</p>
+            {% if haber.content %}
+            <div class="news-body">{{ haber.content|safe }}</div>
+            {% endif %}
+        </div>
+
+        {% if haber.keywords %}
+        <div class="d-flex flex-wrap gap-1 mb-3">
+            {% for kw in haber.keywords %}
+            <a href="/ara?q={{ kw }}" class="badge text-decoration-none p-2" style="background: var(--red); color: white;">{{ kw }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <hr>
+
+        <div class="d-flex gap-2 mb-3">
+            <button class="btn btn-outline-primary btn-sm" onclick="aiOzet({{ haber.id }})"><i class="bi bi-robot"></i> Yapay Zeka Özeti</button>
+        </div>
+        <div id="aiSummary" class="alert alert-info d-none"></div>
+
+        <h5 class="fw-bold mb-3"><i class="bi bi-chat-dots me-1" style="color: var(--red);"></i> Yorumlar</h5>
+        <div class="mb-3">
+            <textarea class="form-control" id="yorumInput" rows="2" placeholder="Ne düşünüyorsun?"></textarea>
+            <button class="btn btn-primary btn-sm mt-2" onclick="yorumGonder({{ haber.id }})">Gönder</button>
+        </div>
+        <div id="yorumlar"></div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header fw-bold"><i class="bi bi-fire me-1" style="color: var(--red);"></i> Çok Okunanlar</div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for t in trending %}
+                    <li class="list-group-item">
+                        <a href="/haber/{{ t.id }}" class="text-decoration-none" style="color: var(--text);">
+                            <small class="text-muted">{{ cat_info[t.category]['name'] if t.category in cat_info else t.category|title }}</small>
+                            <p class="mb-0 fw-semibold small">{{ t.title[:55] }}{% if t.title|length > 55 %}...{% endif %}</p>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {% if ilgili %}
+        <div class="card mb-3">
+            <div class="card-header fw-bold"><i class="bi bi-link-45deg me-1" style="color: var(--red);"></i> İlgili Haberler</div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for h in ilgili %}
+                    <li class="list-group-item">
+                        <a href="/haber/{{ h.id }}" class="text-decoration-none" style="color: var(--text);">
+                            <div class="d-flex gap-2">
+                                <img src="{{ h.image }}" alt="" class="rounded" width="60" height="45" style="object-fit: cover;" loading="lazy">
+                                <div>
+                                    <p class="mb-0 fw-semibold small">{{ h.title[:45] }}...</p>
+                                    <small class="text-muted">{{ h.date }}</small>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        {% set trending_topics = trending_topics or [] %}
+        {% if trending_topics %}
+        <div class="card mb-3">
+            <div class="card-header fw-bold"><i class="bi bi-graph-up me-1" style="color: var(--red);"></i> Trend Konular</div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-1">
+                    {% for t in trending_topics[:10] %}
+                    <a href="/trend/{{ t.topic }}" class="badge text-decoration-none p-2" style="background:var(--red);color:white;font-size:{{ [11,13,14,15,16]|random }}px;">
+                        #{{ t.topic }} <small>({{ t.count }})</small>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="card mb-3">
+            <div class="card-header fw-bold"><i class="bi bi-currency-exchange me-1" style="color: var(--red);"></i> Kripto Para</div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for c in crypto_prices[:4] %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><strong>{{ c.symbol }}</strong></span>
+                        <span><span class="fw-bold me-2">${{ c.price }}</span>
+                        <span class="{% if c.is_up %}text-success{% else %}text-danger{% endif %} small">{{ c.change_24h }}%</span></span>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="p-2 text-center">
+                    <a href="/finans" class="btn btn-outline-primary btn-sm w-100">Detaylı Finans</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lightbox Modal -->
+<div id="lightbox" class="lightbox-overlay" onclick="closeLightbox()" style="display:none;">
+    <span class="lightbox-close">&times;</span>
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+        <img id="lightbox-img" src="" alt="">
+        <p id="lightbox-caption" class="text-white text-center mt-2"></p>
+        <div class="lightbox-nav">
+            <button class="btn btn-dark btn-sm" onclick="changeLightbox(-1)"><i class="bi bi-chevron-left"></i></button>
+            <button class="btn btn-dark btn-sm" onclick="changeLightbox(1)"><i class="bi bi-chevron-right"></i></button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentSlide = 0;
+let galleryImages = {{ (haber.gallery or [])|tojson }};
+if (!galleryImages || galleryImages.length === 0) {
+    galleryImages = [{"url": "{{ haber.image }}", "caption": ""}];
+}
+
+function changeSlide(dir) {
+    const slides = document.querySelectorAll('.gallery-slide');
+    if (!slides.length) return;
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + dir + slides.length) % slides.length;
+    slides[currentSlide].classList.add('active');
+    updateDots();
+}
+
+function goToSlide(idx) {
+    const slides = document.querySelectorAll('.gallery-slide');
+    if (!slides.length) return;
+    slides[currentSlide].classList.remove('active');
+    currentSlide = idx;
+    slides[currentSlide].classList.add('active');
+    updateDots();
+}
+
+function updateDots() {
+    document.querySelectorAll('.gallery-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+}
+
+function openLightbox(idx) {
+    currentSlide = idx;
+    const lb = document.getElementById('lightbox');
+    updateLightbox();
+    lb.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function changeLightbox(dir) {
+    currentSlide = (currentSlide + dir + galleryImages.length) % galleryImages.length;
+    updateLightbox();
+}
+
+function updateLightbox() {
+    const img = galleryImages[currentSlide];
+    document.getElementById('lightbox-img').src = img.url;
+    document.getElementById('lightbox-caption').textContent = img.caption || '';
+}
+
+document.addEventListener('keydown', function(e) {
+    if (document.getElementById('lightbox').style.display === 'flex') {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') changeLightbox(-1);
+        if (e.key === 'ArrowRight') changeLightbox(1);
+    }
+});
+
+function aiOzet(newsId) {
+    const el = document.getElementById('aiSummary');
+    el.classList.remove('d-none');
+    el.innerHTML = '<i class="bi bi-robot"></i> Yapay zeka özeti hazirlaniyor...';
+    fetch('/api/yapay-zeka-ozet/' + newsId)
+        .then(r => r.json())
+        .then(data => {
+            el.innerHTML = '<i class="bi bi-robot" style="color: var(--red);"></i> <strong>Yapay Zeka Özeti:</strong> ' + (data.summary || data.error || 'Hata');
+        })
+        .catch(() => {
+            el.innerHTML = 'Özet alinamadi.';
+        });
+}
+</script>
+{% endblock %}

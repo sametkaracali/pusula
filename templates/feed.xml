@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>Pusula - Haberler</title>
+<link>https://pusula.com</link>
+<description>Pusula - Yapay zeka destekli haber platformu</description>
+<atom:link href="https://pusula.com/feed.xml" rel="self" type="application/rss+xml"/>
+{% for haber in news %}
+<item>
+<title>{{ haber.title }}</title>
+<link>https://pusula.com/haber/{{ haber.id }}</link>
+<description>{{ haber.summary }}</description>
+<category>{{ haber.category }}</category>
+<pubDate>{{ haber.date }}</pubDate>
+<guid>https://pusula.com/haber/{{ haber.id }}</guid>
+</item>
+{% endfor %}
+</channel>
+</rss>
